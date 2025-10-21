@@ -15,7 +15,6 @@
         /* ==== Styling Navbar ==== */
         .navbar-nav .nav-item {
             margin-right: 15px;
-            /* 🔹 Jarak antar menu */
         }
 
         .navbar-nav .nav-link {
@@ -25,32 +24,66 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* 🔹 Hover lebih solid */
         .navbar-nav .nav-link:hover {
             background-color: rgba(255, 255, 255, 0.25);
             color: #fff;
         }
 
-        /* 🔹 Active state lebih jelas */
         .navbar-nav .nav-link.active {
             background-color: rgba(255, 255, 255, 0.4);
             font-weight: 600;
             color: #fff;
         }
 
-        /* 🔹 Dropdown toggle spacing & color */
         .navbar-nav .dropdown-toggle {
             margin-left: 10px;
         }
 
-        /* 🔹 Tambahkan jarak antara navbar dan konten */
-        .navbar {
-            margin-bottom: 20px;
+        /* ==== Sidebar Styling ==== */
+        .sidebar {
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            min-height: calc(100vh - 76px);
+            padding: 0;
+        }
+
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 12px 20px;
+            border-radius: 0;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+            color: #0d6efd;
+            border-left-color: #0d6efd;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #e7f1ff;
+            color: #0d6efd;
+            border-left-color: #0d6efd;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 120px);
+        }
+
+        .footer {
+            margin-top: auto;
         }
     </style>
 </head>
 
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
 
     <!-- Navigation - hanya tampil jika user sudah login -->
     @if(Auth::check())
@@ -96,6 +129,12 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
+                                    <a class="dropdown-item" href="{{ route('profile.index') }}">
+                                        <i class="fas fa-user-cog me-2"></i>Profile
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" class="dropdown-item">
@@ -112,11 +151,56 @@
         </nav>
     @endif
 
-    <!-- Main Content -->
-    <main
-        class="@if(Auth::check()) container py-4 @else min-vh-100 d-flex align-items-center justify-content-center @endif">
-        @yield('content')
-    </main>
+    <!-- Main Content dengan Sidebar -->
+    <div class="main-content flex-grow-1">
+        @if(Auth::check() && Route::is('profile.*'))
+            <!-- Layout dengan Sidebar untuk Profile -->
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Sidebar -->
+                    <div class="col-md-3 col-lg-2 sidebar">
+                        <nav class="nav flex-column py-3">
+                            <a class="nav-link {{ Route::is('profile.index') ? 'active' : '' }}" 
+                               href="{{ route('profile.index') }}">
+                                <i class="fas fa-user-edit"></i>Edit Profile
+                            </a>
+                            <a class="nav-link {{ Route::is('profile.password') ? 'active' : '' }}" 
+                               href="{{ route('profile.password') }}">
+                                <i class="fas fa-key"></i>Ganti Password
+                            </a>
+                            <hr>
+                            <form method="POST" action="{{ route('logout') }}" class="nav-link">
+                                @csrf
+                                <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none">
+                                    <i class="fas fa-sign-out-alt"></i>Logout
+                                </button>
+                            </form>
+                        </nav>
+                    </div>
+
+                    <!-- Content Area -->
+                    <div class="col-md-9 col-lg-10 py-4">
+                        @yield('content')
+                    </div>
+                </div>
+            </div>
+        @else
+            <!-- Layout normal untuk halaman lainnya -->
+            @if(Auth::check())
+                <div class="container py-4">
+                    @yield('content')
+                </div>
+            @else
+                <div class="container-fluid">
+                    <div class="row justify-content-center align-items-center min-vh-100 py-4">
+                        <div class="col-md-5 col-lg-4">
+                            @yield('content')
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endif
+    </div>
 
     <!-- Flash Messages -->
     @if(session('success'))
@@ -143,9 +227,10 @@
         </div>
     @endif
 
-    <footer class="text-center mt-3 mb-2 text-black shadow-sm py-2">
-        <div class="container">
-            <h6 class="fw-semibold">© 2025 - Muhamad Fathir Rahman</h6>
+    <!-- Footer -->
+    <footer class="footer bg-light border-top mt-auto py-3">
+        <div class="container text-center">
+            <h6 class="fw-semibold mb-0 text-muted">© 2025 - Muhamad Fathir Rahman</h6>
         </div>
     </footer>
 

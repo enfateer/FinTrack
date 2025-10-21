@@ -6,10 +6,16 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 fw-bold text-dark mb-0">Manajemen Transaksi</h1>
-            <a href="{{ route('transactions.create') }}" class="btn btn-primary d-flex align-items-center">
-                <i class="fas fa-plus me-2"></i> Tambah Transaksi
-            </a>
+            <div class="d-flex">
+                <a href="{{ route('transactions.create') }}" class="btn btn-primary d-flex align-items-center me-2">
+                    <i class="fas fa-plus me-2"></i> Tambah Transaksi
+                </a>
+                <a href="#" class="btn btn-danger d-flex align-items-center">
+                    <i class="fa-solid fa-trash me-2"></i> Sampah Transaksi
+                </a>
+            </div>
         </div>
+
 
         <!-- Transactions Table -->
         <div class="card shadow-sm border-0">
@@ -32,7 +38,13 @@
                             <tr>
                                 <td>{{ $transaction->transaction_date->format('d/m/Y') }}</td>
                                 <td>{{ $transaction->item_name }}</td>
-                                <td>{{ $transaction->category->name }}</td>
+                                <td>
+                                    @if($transaction->category)
+                                        {{ $transaction->category->name }}
+                                    @else
+                                        <span class="text-muted">- Kategori Dihapus -</span>
+                                    @endif
+                                </td>
                                 <td>Rp {{ number_format($transaction->price, 0, ',', '.') }}</td>
                                 <td>{{ $transaction->quantity }}</td>
                                 <td>
@@ -49,10 +61,6 @@
                                 <td class="text-end">Rp {{ number_format($transaction->total, 0, ',', '.') }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
-                                        <a href="{{ route('transactions.show', $transaction) }}"
-                                            class="btn btn-sm btn-outline-primary" title="Detail">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
                                         <a href="{{ route('transactions.edit', $transaction) }}"
                                             class="btn btn-sm btn-outline-success" title="Edit">
                                             <i class="fas fa-edit"></i>

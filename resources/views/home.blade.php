@@ -102,7 +102,13 @@
                         <tr>
                             <td>{{ $transaction->transaction_date->format('d/m/Y') }}</td>
                             <td>{{ $transaction->item_name }}</td>
-                            <td>{{ $transaction->category->name }}</td>
+                            <td>
+                                @if($transaction->category)
+                                    {{ $transaction->category->name }}
+                                @else
+                                    <span class="text-muted">- Kategori Dihapus -</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($transaction->type == 'pemasukan')
                                     <span class="badge bg-success-subtle text-success fw-semibold">{{ ucfirst($transaction->type) }}</span>
