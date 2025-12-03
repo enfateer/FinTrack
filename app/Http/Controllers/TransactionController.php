@@ -4,16 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Category;
+use App\Exports\TransactionsExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class TransactionController extends Controller
 {
     public function index()
     {
         $transactions = Transaction::with(['category', 'user'])
+            ->where('user_id', auth()->id())
             ->latest()
             ->get();
         return view('transactions.index', compact('transactions'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new TransactionsExport, 'transactions_' . date('Y-m-d') . '.xlsx');
     }
 
     public function create()
@@ -34,9 +44,8 @@ class TransactionController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        // Gunakan create dengan data yang sudah divalidasi
         Transaction::create([
-            'user_id' => auth()->id(), // Tambahkan user_id secara manual
+            'user_id' => auth()->id(),
             'category_id' => $request->category_id,
             'item_name' => $request->item_name,
             'price' => $request->price,
@@ -44,26 +53,39 @@ class TransactionController extends Controller
             'type' => $request->type,
             'transaction_date' => $request->transaction_date,
             'notes' => $request->notes,
-            // total akan dihitung otomatis di model boot method
         ]);
 
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi berhasil ditambahkan.');
     }
 
-    public function show(Transaction $transaction)
+    public function eksporPdf($id)
     {
-        // Pastikan user hanya bisa melihat transaksi miliknya sendiri
+        $transaction = Transaction::with(['category', 'user'])->findOrFail($id);
+
         if ($transaction->user_id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403, 'Unauthorized action.');
         }
-        
+
+        $pdf = Pdf::loadView('transactions.export-pdf', compact('transaction'));
+        return $pdf->download('transaction_' . $transaction->id . '_' . date('Y-m-d') . '.pdf');
+    }
+
+    public function show($id)
+    {
+        $transaction = Transaction::with(['category', 'user'])->findOrFail($id);
+
+        if ($transaction->user_id !== auth()->id() && !auth()->user()->is_admin) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('transactions.show', compact('transaction'));
     }
 
-    public function edit(Transaction $transaction)
+    public function edit($id)
     {
-        // Pastikan user hanya bisa mengedit transaksi miliknya sendiri
+        $transaction = Transaction::findOrFail($id);
+
         if ($transaction->user_id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403, 'Unauthorized action.');
         }
@@ -72,9 +94,10 @@ class TransactionController extends Controller
         return view('transactions.edit', compact('transaction', 'categories'));
     }
 
-    public function update(Request $request, Transaction $transaction)
+    public function update(Request $request, $id)
     {
-        // Pastikan user hanya bisa mengupdate transaksi miliknya sendiri
+        $transaction = Transaction::findOrFail($id);
+
         if ($transaction->user_id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403, 'Unauthorized action.');
         }
@@ -97,16 +120,16 @@ class TransactionController extends Controller
             'type' => $request->type,
             'transaction_date' => $request->transaction_date,
             'notes' => $request->notes,
-            // total akan dihitung otomatis di model boot method
         ]);
 
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi berhasil diperbarui.');
     }
 
-    public function destroy(Transaction $transaction)
+    public function destroy($id)
     {
-        // Pastikan user hanya bisa menghapus transaksi miliknya sendiri
+        $transaction = Transaction::findOrFail($id);
+
         if ($transaction->user_id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403, 'Unauthorized action.');
         }

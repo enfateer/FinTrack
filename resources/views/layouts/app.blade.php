@@ -1,255 +1,219 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinTrack App</title>
+    <title>FinTrack</title>
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
     <style>
-        /* ==== Styling Navbar ==== */
-        .navbar-nav .nav-item {
-            margin-right: 15px;
+        /* Variabel Warna Kustom untuk konsistensi */
+        :root {
+            --primary: #0d6efd; /* Biru Bootstrap */
+            --primary-light: #e6f0ff;
+            --background: #f4f6f9; /* Latar Belakang lebih bersih */
+            --card-bg: #ffffff;
+            --text-color: #1f2937; /* Teks utama lebih gelap */
         }
 
-        .navbar-nav .nav-link {
-            border-radius: .5rem;
-            padding: .6rem 1rem;
-            color: rgba(255, 255, 255, 0.9);
-            transition: background-color 0.3s ease, color 0.3s ease;
+        body {
+            background: var(--background);
+            color: var(--text-color);
+            /* Menggunakan font default sistem yang modern */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         }
 
-        .navbar-nav .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.25);
-            color: #fff;
+        /* --- Navbar (Peningkatan Desain) --- */
+        .simple-navbar {
+            background: var(--card-bg);
+            border-bottom: none; /* Hilangkan border lama */
+            /* Tambahkan Shadow halus untuk efek mengambang (premium feel) */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }
 
-        .navbar-nav .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.4);
-            font-weight: 600;
-            color: #fff;
+        .simple-navbar .navbar-brand {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700 !important;
+            letter-spacing: -0.5px;
         }
 
-        .navbar-nav .dropdown-toggle {
-            margin-left: 10px;
+        .simple-navbar .nav-link {
+            padding: 12px 18px; /* Padding lebih luas */
+            font-weight: 500;
+            color: var(--text-color);
+            position: relative;
+            transition: all 0.2s ease-in-out;
+            display: flex; /* Untuk meratakan ikon */
+            align-items: center;
         }
 
-        /* ==== Sidebar Styling ==== */
-        .sidebar {
-            background: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-            min-height: calc(100vh - 76px);
-            padding: 0;
+        .simple-navbar .nav-link:hover {
+            color: var(--primary);
         }
 
-        .sidebar .nav-link {
-            color: #495057;
-            padding: 12px 20px;
-            border-radius: 0;
-            border-left: 3px solid transparent;
-            transition: all 0.3s ease;
+        .simple-navbar .nav-link i {
+            margin-right: 8px; /* Jarak antara ikon dan teks */
+        }
+        
+        /* Underline ketika aktif - lebih tebal dan berwarna */
+        .simple-navbar .nav-link.active {
+            color: var(--primary); /* Teks aktif juga berwarna biru */
         }
 
-        .sidebar .nav-link:hover {
-            background-color: #e9ecef;
-            color: #0d6efd;
-            border-left-color: #0d6efd;
+        .simple-navbar .nav-link.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0; /* Posisikan tepat di bagian bawah navbar */
+            left: 50%;
+            transform: translateX(-50%); /* Rata tengah */
+            width: 80%;
+            height: 3px; /* Lebih tebal */
+            background: var(--primary);
+            border-radius: 3px 3px 0 0;
         }
 
-        .sidebar .nav-link.active {
-            background-color: #e7f1ff;
-            color: #0d6efd;
-            border-left-color: #0d6efd;
-            font-weight: 600;
+        .profile-img {
+            width: 36px; /* Sedikit lebih besar */
+            height: 36px;
+            object-fit: cover;
+            border: 2px solid var(--primary-light); /* Garis luar tipis */
         }
 
-        .sidebar .nav-link i {
-            width: 20px;
-            margin-right: 10px;
+        /* Gaya Dropdown yang lebih modern */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 0.5rem;
         }
 
-        .main-content {
-            min-height: calc(100vh - 120px);
+        .dropdown-item.text-danger:hover {
+            background-color: #fcebeb; 
         }
 
-        .footer {
-            margin-top: auto;
+        /* Container utama untuk konten */
+        .main-content-container {
+            padding-top: 30px !important;
+            padding-bottom: 30px !important;
+        }
+
+        /* Responsif untuk mobile */
+        @media (max-width: 991.98px) {
+            .simple-navbar .nav-link.active::after {
+                width: 50px; 
+                left: 1rem;
+                transform: translateX(0);
+                bottom: -5px;
+            }
+            .simple-navbar .nav-link {
+                justify-content: start; 
+            }
         }
     </style>
 </head>
 
-<body class="bg-light d-flex flex-column min-vh-100">
+<body>
 
-    <!-- Navigation - hanya tampil jika user sudah login -->
-    @if(Auth::check())
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-            <div class="container">
-                <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-                    <i class="fas fa-wallet me-2 fs-4"></i>
-                    <span class="fw-bold">FinTrack App</span>
-                </a>
+@if(Auth::check())
+<nav class="navbar navbar-expand-lg simple-navbar sticky-top">
+    <div class="container">
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+        <a class="navbar-brand fw-bold" href="{{ route('home') }}">
+            FinTrack
+        </a>
 
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul class="navbar-nav align-items-center">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                        <li class="nav-item">
-                            <a href="{{ route('home') }}" class="nav-link {{ Route::is('home') ? 'active' : '' }}">
-                                <i class="fas fa-home me-2"></i>Home
+        <div class="collapse navbar-collapse" id="navMenu">
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('home') ? 'active' : '' }}" 
+                       href="{{ route('home') }}">
+                       <i class="bi bi-house-door-fill"></i> Dashboard
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('transactions.*') ? 'active' : '' }}"
+                       href="{{ route('transactions.index') }}">
+                       <i class="bi bi-arrow-left-right"></i> Transaksi
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('categories.*') ? 'active' : '' }}"
+                       href="{{ route('categories.index') }}">
+                       <i class="bi bi-tags-fill"></i> Kategori
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0"> <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" 
+                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ Auth::user()->profile_picture_url ?? 'https://via.placeholder.com/150' }}"
+                             class="rounded-circle profile-img me-2" alt="Profil Pengguna">
+                        <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('profile.index') }}">
+                                <i class="bi bi-person-circle me-2"></i> Profile Saya
                             </a>
                         </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('transactions.index') }}"
-                                class="nav-link {{ Route::is('transactions.*') ? 'active' : '' }}">
-                                <i class="fas fa-exchange-alt me-2"></i>Transaksi
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('categories.index') }}"
-                                class="nav-link {{ Route::is('categories.*') ? 'active' : '' }}">
-                                <i class="fas fa-tags me-2"></i>Kategori
-                            </a>
-                        </li>
-
-                        <!-- Dropdown User -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                                data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-2"></i> {{ Auth::user()->name }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('profile.index') }}">
-                                        <i class="fas fa-user-cog me-2"></i>Profile
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    @endif
-
-    <!-- Main Content dengan Sidebar -->
-    <div class="main-content flex-grow-1">
-        @if(Auth::check() && Route::is('profile.*'))
-            <!-- Layout dengan Sidebar untuk Profile -->
-            <div class="container-fluid">
-                <div class="row">
-                    <!-- Sidebar -->
-                    <div class="col-md-3 col-lg-2 sidebar">
-                        <nav class="nav flex-column py-3">
-                            <a class="nav-link {{ Route::is('profile.index') ? 'active' : '' }}" 
-                               href="{{ route('profile.index') }}">
-                                <i class="fas fa-user-edit"></i>Edit Profile
-                            </a>
-                            <a class="nav-link {{ Route::is('profile.password') ? 'active' : '' }}" 
-                               href="{{ route('profile.password') }}">
-                                <i class="fas fa-key"></i>Ganti Password
-                            </a>
-                            <hr>
-                            <form method="POST" action="{{ route('logout') }}" class="nav-link">
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none">
-                                    <i class="fas fa-sign-out-alt"></i>Logout
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
                                 </button>
                             </form>
-                        </nav>
-                    </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
 
-                    <!-- Content Area -->
-                    <div class="col-md-9 col-lg-10 py-4">
-                        @yield('content')
-                    </div>
-                </div>
-            </div>
-        @else
-            <!-- Layout normal untuk halaman lainnya -->
-            @if(Auth::check())
-                <div class="container py-4">
-                    @yield('content')
-                </div>
-            @else
-                <div class="container-fluid">
-                    <div class="row justify-content-center align-items-center min-vh-100 py-4">
-                        <div class="col-md-5 col-lg-4">
-                            @yield('content')
-                        </div>
-                    </div>
-                </div>
-            @endif
-        @endif
+        </div>
     </div>
+</nav>
+@endif
 
-    <!-- Flash Messages -->
+<div class="container main-content-container">
     @if(session('success'))
-        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
-            <div class="toast align-items-center text-white bg-success border-0 show" id="successToast" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                    </div>
-                </div>
-            </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
-            <div class="toast align-items-center text-white bg-danger border-0 show" id="errorToast" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-                    </div>
-                </div>
-            </div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
-    <!-- Footer -->
-    <footer class="footer bg-light border-top mt-auto py-3">
-        <div class="container text-center">
-            <h6 class="fw-semibold mb-0 text-muted">© 2025 - Muhamad Fathir Rahman</h6>
+    @if(session('failed'))
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ session('failed') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    </footer>
+    @endif
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @yield('content')
+</div>
 
-    <script>
-        // Auto hide toast setelah 5 detik
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(() => {
-                const toastElList = document.querySelectorAll('.toast');
-                toastElList.forEach(toast => {
-                    const bsToast = bootstrap.Toast.getOrCreateInstance(toast);
-                    bsToast.hide();
-                });
-            }, 5000);
-        });
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+@vite(['resources/js/app.js'])
 
 </body>
-
 </html>

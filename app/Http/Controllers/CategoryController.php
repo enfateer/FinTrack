@@ -3,14 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Exports\CategoriesExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::whereNull('deleted_at')->get();
         return view('categories.index', compact('categories'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new CategoriesExport, 'categories_' . date('Y-m-d') . '.xlsx');
     }
 
     public function create()
@@ -86,12 +93,38 @@ class CategoryController extends Controller
             return redirect()->back()->with('error', 'Kategori tidak dapat dihapus karena sudah digunakan dalam transaksi.');
         }
 
-        $deleteCategories = $category->delete();
+        $deleteCategories = $category->delete(); // Soft delete
         if ($deleteCategories) {
-            return redirect()->route('categories.index')->with('success', 'Data kategori berhasil dihapus permanen');
+            return redirect()->route('categories.index')->with('success', 'Data kategori berhasil dihapus');
         } else {
             return redirect()->back()->with('failed', 'Data kategori gagal dihapus');
         }
+    }
+
+    public function trash()
+    {
+        $categories = Category::onlyTrashed()->get();
+        return view('categories.trash', compact('categories'));
+    }
+
+    public function restore($id)
+    {
+        $category = Category::withTrashed()->find($id);
+        if ($category) {
+            $category->restore();
+            return redirect()->route('categories.trash')->with('success', 'Kategori berhasil dikembalikan.');
+        }
+        return redirect()->route('categories.trash')->with('error', 'Kategori tidak ditemukan.');
+    }
+
+    public function deletePermanent($id)
+    {
+        $category = Category::withTrashed()->find($id);
+        if ($category) {
+            $category->forceDelete();
+            return redirect()->route('categories.trash')->with('success', 'Kategori berhasil dihapus permanen.');
+        }
+        return redirect()->route('categories.trash')->with('error', 'Kategori tidak ditemukan.');
     }
 
 

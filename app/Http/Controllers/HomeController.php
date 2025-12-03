@@ -14,6 +14,9 @@ class HomeController extends Controller
         $totalPengeluaran = Transaction::where('type', 'pengeluaran')->sum('total');
         $saldo = $totalPemasukan - $totalPengeluaran;
 
+        $countPemasukan = Transaction::where('type', 'pemasukan')->count();
+        $countPengeluaran = Transaction::where('type', 'pengeluaran')->count();
+
         $recentTransactions = Transaction::with('category')
             ->latest()
             ->take(5)
@@ -33,6 +36,8 @@ class HomeController extends Controller
             'totalPemasukan',
             'totalPengeluaran',
             'saldo',
+            'countPemasukan',
+            'countPengeluaran',
             'recentTransactions',
             'monthlySummary'
         ));
