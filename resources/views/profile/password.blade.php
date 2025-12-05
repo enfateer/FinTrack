@@ -72,6 +72,7 @@
 
                         <form method="POST" action="{{ route('profile.password.update') }}">
                             @csrf
+                            @method('PUT')
 
                             <div class="mb-3">
                                 <label for="current_password" class="form-label fw-semibold">
@@ -119,8 +120,6 @@
                                     Kembali
                                 </a>
 
-                                @csrf
-                                @method('')
                                 <button type="submit" class="btn btn-warning d-flex align-items-center rounded-3">
                                     <i class="bi bi-key-fill me-2"></i>
                                     Update Password

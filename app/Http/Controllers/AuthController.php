@@ -62,7 +62,7 @@ class AuthController extends Controller
 
         // Coba login
         if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
-            $request->session()->regenerate();
+            // $request->session()->regenerate();
             return redirect()->route('home')->with('success', 'Login berhasil! Selamat datang kembali.');
         }
 
@@ -75,8 +75,6 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
         return redirect()->route('login')->with('success', 'Logout berhasil!');
     }
 }

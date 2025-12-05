@@ -28,7 +28,7 @@ class TransactionController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::where('user_id', auth()->id())->get();
         return view('transactions.create', compact('categories'));
     }
 
@@ -39,10 +39,11 @@ class TransactionController extends Controller
             'item_name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
-            'type' => 'required|in:pemasukan,pengeluaran',
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string',
         ]);
+
+        $category = Category::find($request->category_id);
 
         Transaction::create([
             'user_id' => auth()->id(),
@@ -50,7 +51,7 @@ class TransactionController extends Controller
             'item_name' => $request->item_name,
             'price' => $request->price,
             'quantity' => $request->quantity,
-            'type' => $request->type,
+            'type' => $category->type,
             'transaction_date' => $request->transaction_date,
             'notes' => $request->notes,
         ]);
@@ -63,9 +64,9 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::with(['category', 'user'])->findOrFail($id);
 
-        if ($transaction->user_id !== auth()->id() && !auth()->user()->is_admin) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if ($transaction->user_id !== auth()->id() && !auth()->user()->is_admin) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $pdf = Pdf::loadView('transactions.export-pdf', compact('transaction'));
         return $pdf->download('transaction_' . $transaction->id . '_' . date('Y-m-d') . '.pdf');
@@ -90,7 +91,7 @@ class TransactionController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $categories = Category::all();
+        $categories = Category::where('user_id', auth()->id())->get();
         return view('transactions.edit', compact('transaction', 'categories'));
     }
 
@@ -107,17 +108,18 @@ class TransactionController extends Controller
             'item_name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
-            'type' => 'required|in:pemasukan,pengeluaran',
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string',
         ]);
+
+        $category = Category::find($request->category_id);
 
         $transaction->update([
             'category_id' => $request->category_id,
             'item_name' => $request->item_name,
             'price' => $request->price,
             'quantity' => $request->quantity,
-            'type' => $request->type,
+            'type' => $category->type,
             'transaction_date' => $request->transaction_date,
             'notes' => $request->notes,
         ]);

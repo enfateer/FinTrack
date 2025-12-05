@@ -122,7 +122,7 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="d-flex justify-content-end gap-2 mt-4">
+                {{-- <div class="d-flex justify-content-end gap-2 mt-4">
                     <a href="{{ route('transactions.edit', $transaction) }}" class="btn btn-primary">
                         <i class="fas fa-edit me-2"></i> Edit
                     </a>
@@ -134,7 +134,7 @@
                             <i class="fas fa-trash me-2"></i> Hapus
                         </button>
                     </form>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

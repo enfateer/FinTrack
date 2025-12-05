@@ -139,7 +139,7 @@
                                     Kembali
                                 </a>
 
-                                <a href="{{ route('profile.update') }}" class="btn btn-warning rounded-3">
+                                <a href="{{ route('profile.password') }}" class="btn btn-warning rounded-3">
                                     <i class="bi bi-key-fill me-2"></i>
                                     Ganti Password
                                 </a>

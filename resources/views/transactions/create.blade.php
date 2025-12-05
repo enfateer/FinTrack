@@ -38,19 +38,6 @@
                         @enderror
                     </div>
 
-                    <!-- Type -->
-                    <div class="col-md-6">
-                        <label for="type" class="form-label fw-semibold">Jenis Transaksi</label>
-                        <select id="type" name="type" class="form-select @error('type') is-invalid @enderror" required>
-                            <option value="">Pilih Jenis</option>
-                            <option value="pemasukan" {{ old('type') == 'pemasukan' ? 'selected' : '' }}>Pemasukan</option>
-                            <option value="pengeluaran" {{ old('type') == 'pengeluaran' ? 'selected' : '' }}>Pengeluaran</option>
-                        </select>
-                        @error('type')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
                     <!-- Price -->
                     <div class="col-md-6">
                         <label for="price" class="form-label fw-semibold">Harga Satuan</label>

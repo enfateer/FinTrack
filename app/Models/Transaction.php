@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Transaction extends Model
 {
-    use HasFactory;
+use HasFactory;
 
     protected $fillable = [
         'user_id', // Tambahkan ini

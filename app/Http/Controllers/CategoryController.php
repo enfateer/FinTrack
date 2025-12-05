@@ -11,7 +11,9 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::whereNull('deleted_at')->get();
+        $categories = Category::where('user_id', auth()->id())
+            ->whereNull('deleted_at')
+            ->get();
         return view('categories.index', compact('categories'));
     }
 
@@ -33,7 +35,12 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Category::create($request->all());
+        Category::create([
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'type' => $request->type,
+            'description' => $request->description,
+        ]);
 
         return redirect()->route('categories.index')
             ->with('success', 'Kategori berhasil ditambahkan.');
@@ -46,7 +53,10 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
-        $categories = Category::find($id);
+        $categories = Category::where('user_id', auth()->id())->find($id);
+        if (!$categories) {
+            abort(404);
+        }
         return view('categories.edit', compact('categories'));
     }
 
@@ -66,7 +76,9 @@ class CategoryController extends Controller
             'description.string' => 'Deskripsi harus berupa teks.',
     ]);
 
-    $updateCategories = Category::where('id', $id)->update([
+    $updateCategories = Category::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->update([
             'name' => $request->name,
             'type' => $request->type,
             'description' => $request->description,
@@ -86,7 +98,11 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        $category = Category::find($id);
+        $category = Category::where('user_id', auth()->id())->find($id);
+
+        if (!$category) {
+            return redirect()->back()->with('error', 'Kategori tidak ditemukan.');
+        }
 
         // Cek apakah kategori sudah digunakan dalam transaksi
         if ($category->transactions()->count() > 0) {
@@ -103,13 +119,17 @@ class CategoryController extends Controller
 
     public function trash()
     {
-        $categories = Category::onlyTrashed()->get();
+        $categories = Category::where('user_id', auth()->id())
+            ->onlyTrashed()
+            ->get();
         return view('categories.trash', compact('categories'));
     }
 
     public function restore($id)
     {
-        $category = Category::withTrashed()->find($id);
+        $category = Category::where('user_id', auth()->id())
+            ->withTrashed()
+            ->find($id);
         if ($category) {
             $category->restore();
             return redirect()->route('categories.trash')->with('success', 'Kategori berhasil dikembalikan.');
